@@ -4,6 +4,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
+import java.rmi.ConnectException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +14,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         System.out.println("Hello world!");
-        String url = "https://cfy.ksu.edu.sa/en/node/1146";
+        String url = "https://ccis.ksu.edu.sa/ar/cs/faculty-and-staff";
 
         crawl(1,url, new ArrayList<String>());
         System.out.println(count);
@@ -23,7 +24,6 @@ public class Main {
         if(i<=5) {
             Document doc = request(url, visited);
             if (doc != null) {
-                String regex = "(.+)@(.)ksu.edu.sa";
                 for (Element link : doc.select("a[href]")) {
                     String next_link = link.absUrl("href");
                     if (visited.contains(next_link) == false)
@@ -33,11 +33,11 @@ public class Main {
         }
     }
 
-    private static Document request(String url, ArrayList<String> visited) throws IOException {
+    private static Document request(String url, ArrayList<String> visited) throws IOException{
         Connection connection = Jsoup.connect(url);
         Document doc = connection.get();
         if(connection.response().statusCode() ==200){
-            Pattern p = Pattern.compile("[_A-Za-z0-9-]+(\\\\.[_A-Za-z0-9-]+)*@(.*)+[ksu.edu.sa]");
+            Pattern p = Pattern.compile("[A-Za-z0-9-]+@([A-Za-z\\.])*ksu.edu.sa");
 //            System.out.println(doc.title());
             Matcher matcher = p.matcher(doc.body().html());
             while (matcher.find()) {
